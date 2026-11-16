@@ -44,6 +44,8 @@
 
 #include "ff.h"
 #include "bmp.h"
+#include "protocol.h"
+#include <string.h>
 
 #if LWIP_IPV6==1
 #include "lwip/ip.h"
@@ -124,8 +126,10 @@ static FATFS card;
 static uint8_t continutFisier[65536];
 static uint8_t continutImagine[7340032];
 static uint8_t imagineConvertita[7340032];
+static uint8_t pachet[sizeof(antet_t) + sizeof(continutFisier) + sizeof(continutImagine)];
 
 void setDataToSend(const uint8_t *data, uint32_t len);
+
 
 int readFile(const char* file_name, uint8_t* buffer, uint32_t max_len)
 {
@@ -149,6 +153,50 @@ int readFile(const char* file_name, uint8_t* buffer, uint32_t max_len)
     f_close(&fil);
     return (int)fileLength;
 }
+
+int writeFile(const char *file_name, const uint8_t *buffer, uint32_t len)
+{
+    FIL fil;
+    if(f_open(&fil, file_name, FA_WRITE | FA_CREATE_ALWAYS) != FR_OK)
+    {
+        return -1;
+    }
+    UINT octetiScrisi;
+    if(f_write(&fil, buffer, len, &octetiScrisi) != FR_OK || octetiScrisi != len)
+    {
+        f_close(&fil);
+        return -1;
+    }
+    f_close(&fil);
+    return len;
+}
+
+void proceseazaRaspuns(const uint8_t *date, uint32_t len)
+{
+    if(len < sizeof(antet_t))
+    {
+        xil_printf("Nu exista un antet intreg\r\n");
+        return;        
+    }    
+    antet_t antet;
+    memcpy(&antet, date, sizeof(antet_t));
+    if(antet.magic != MAGIC_SSC || sizeof(antet_t) + antet.lenText + antet.lenImagine != len)
+    {
+        xil_printf("Pachet invalid\r\n");
+        return;
+    }
+
+    const uint8_t *dateText = date + sizeof(antet_t), *dateImagine = date + sizeof(antet_t) + antet.lenText;
+    for(uint32_t i = 0; i < antet.lenText; i++)
+    {
+        xil_printf("%c", dateText[i]);
+    }
+    xil_printf("\r\n");
+    int outText = writeFile("0:/OUT.TXT", dateText, antet.lenText);
+    int outImagine = writeFile("0:/OUT.BMP", dateImagine, antet.lenImagine);
+    xil_printf("OUT.TXT salvat: %d octeti\r\n", outText);
+    xil_printf("OUT.BMP salvat: %d octeti\r\n", outImagine);
+}   
 
 int main()
 {
@@ -192,19 +240,11 @@ int main()
         {
             xil_printf("Fisierul text nu s-a citit\r\n");
         }
-        // else
-        // {
-        //     setDataToSend(continutFisier, octetiText);
-        // }
 
         int octetiImagine = readFile("0:/IMG.BMP", continutImagine, sizeof(continutImagine));
         if(octetiImagine < 0)
         {
             xil_printf("Fisierul imagine nu s-a citit\r\n");
-        }
-        else
-        {
-            setDataToSend(continutImagine, octetiImagine);            
         }
 
         xil_printf("Din fisierul text s-au citit %d bytes\r\n", octetiText);
@@ -220,6 +260,21 @@ int main()
                 bmp_to_rgb(continutImagine, &infoFisier, imagineConvertita);
                 xil_printf("Imagine %d x %d\r\n", infoFisier.width, infoFisier.height);
             }
+        }
+
+        if(octetiText > 0 && octetiImagine > 0)
+        {
+            antet_t antet;
+            antet.magic = MAGIC_SSC;
+            antet.lenText = octetiText;
+            antet.lenImagine = octetiImagine;
+
+            memcpy(pachet, &antet, sizeof(antet_t));
+            memcpy(pachet + sizeof(antet_t), continutFisier, octetiText);
+            memcpy(pachet + sizeof(antet_t) + octetiText, continutImagine, octetiImagine);
+
+            int total = sizeof(antet_t) + octetiText + octetiImagine;
+            setDataToSend(pachet, total);
         }
     }
 

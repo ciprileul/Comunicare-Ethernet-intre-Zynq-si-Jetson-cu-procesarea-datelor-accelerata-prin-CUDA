@@ -220,6 +220,10 @@ drv_info:
     ip_name: ps7_sdio
     path: C:\Xilinx\Vitis\2024.1\data\embeddedsw\XilinxProcessorIPLib\drivers\sdps_v4_3
   ps7_slcr_0: None
+  ps7_ttc_0:
+    driver: ttcps
+    ip_name: ps7_ttc
+    path: C:\Xilinx\Vitis\2024.1\data\embeddedsw\XilinxProcessorIPLib\drivers\ttcps_v3_19
   ps7_uart_1:
     driver: uartps
     ip_name: ps7_uart
@@ -247,7 +251,7 @@ lib_config:
       name: XILTIMER_en_interval_timer
       permission: read_write
       type: boolean
-      value: 'false'
+      value: 'true'
       default: 'false'
       options:
       - 'true'
@@ -257,20 +261,22 @@ lib_config:
       name: XILTIMER_sleep_timer
       permission: read_write
       type: string
-      value: ps7_scutimer_0
-      default: ps7_scutimer_0
+      value: Default
+      default: Default
       options:
       - Default
+      - ps7_ttc_0
       - ps7_scutimer_0
       description: This parameter is used to select specific timer for sleep functionality
     XILTIMER_tick_timer:
       name: XILTIMER_tick_timer
       permission: read_write
       type: string
-      value: None
-      default: None
+      value: ps7_scutimer_0
+      default: ps7_scutimer_0
       options:
       - None
+      - ps7_ttc_0
       - ps7_scutimer_0
       description: This parameter is used to select specific timer for tick functionality
   xilffs:
@@ -692,7 +698,7 @@ lib_config:
       name: lwip220_mem_size
       permission: read_write
       type: integer
-      value: '131072'
+      value: '524288'
       default: '131072'
       options: []
       description: Size of the heap memory (bytes).
@@ -700,7 +706,7 @@ lib_config:
       name: lwip220_memp_n_pbuf
       permission: read_write
       type: integer
-      value: '16'
+      value: '1024'
       default: '16'
       options: []
       description: Number of memp struct pbufs. Set this high if application sends
@@ -733,7 +739,7 @@ lib_config:
       name: lwip220_memp_n_tcp_seg
       permission: read_write
       type: integer
-      value: '256'
+      value: '1024'
       default: '256'
       options: []
       description: Number of simultaneously queued TCP segments
@@ -972,7 +978,7 @@ lib_config:
       name: lwip220_tcp_snd_buf
       permission: read_write
       type: integer
-      value: '8192'
+      value: '65535'
       default: '8192'
       options: []
       description: TCP sender buffer space (bytes)
@@ -996,7 +1002,7 @@ lib_config:
       name: lwip220_tcp_wnd
       permission: read_write
       type: integer
-      value: '2048'
+      value: '65535'
       default: '2048'
       options: []
       description: TCP Window (bytes)

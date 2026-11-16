@@ -6,13 +6,18 @@
 #include <string.h>
 #include <stdint.h>
 #include "xiltimer.h"
+#include "protocol.h"
 
-static uint8_t ecou[7340032];
+static uint8_t ecou[sizeof(antet_t) + 65536 + 7340032];
 static uint32_t octetiReceived = 0;
 static const uint8_t *dataToSend = NULL;
 static uint32_t lenToSend = 0;
 static uint32_t octetiSend = 0;
 static XTime startTime, finishTime;
+static volatile int transferGata = 0;
+
+void setDataToSend(const uint8_t *data, uint32_t len);
+void proceseazaRaspuns(const uint8_t *date, uint32_t len);
 
 static void trimiteBucata(struct tcp_pcb *tpcb)
 {
@@ -94,6 +99,7 @@ err_t receiveMessage(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err)
         if(memcmp(ecou, dataToSend, lenToSend) == 0)
         {
             uint64_t durataMicrosec = (finishTime - startTime) * 1000000 / COUNTS_PER_SECOND;
+            transferGata = 1;
             xil_printf("Ecou OK, %d octeti\r\n", lenToSend);
             xil_printf("Timp dus-intors %d microsecunde\r\n", (uint32_t)durataMicrosec);
         }
@@ -142,5 +148,10 @@ int start_application()
 
 int transfer_data()
 {
+    if(transferGata == 1)
+    {
+        transferGata = 0;
+        proceseazaRaspuns(ecou, octetiReceived);
+    }
     return 0;
 }

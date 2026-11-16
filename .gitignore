@@ -71,3 +71,10 @@ jetson/obj/
 # Imaginile/textele de intrare se pun in Git (sunt mici).
 # Rezultatele generate la rulare nu.
 test_data/out/
+
+# ---------- Aplicatia Zynq ----------
+.compile_commands/
+zynq_sim/zynq_sim
+test_data/out_zynq/
+.cache/
+PL/PL.srcs/utils_1/

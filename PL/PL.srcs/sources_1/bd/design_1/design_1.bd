@@ -1,7 +1,7 @@
 {
   "design": {
     "design_info": {
-      "boundary_crc": "0xCC6CFA53F622E079",
+      "boundary_crc": "0xCC6CFA53B4580162",
       "device": "xc7z010clg400-1",
       "gen_directory": "../../../../PL.gen/sources_1/bd/design_1",
       "name": "design_1",
@@ -338,6 +338,9 @@
           "PCW_EN_4K_TIMER": {
             "value": "0"
           },
+          "PCW_EN_EMIO_TTC0": {
+            "value": "1"
+          },
           "PCW_EN_ENET0": {
             "value": "1"
           },
@@ -348,6 +351,9 @@
             "value": "1"
           },
           "PCW_EN_SDIO0": {
+            "value": "1"
+          },
+          "PCW_EN_TTC0": {
             "value": "1"
           },
           "PCW_EN_UART1": {
@@ -961,6 +967,15 @@
           },
           "PCW_TPIU_PERIPHERAL_CLKSRC": {
             "value": "External"
+          },
+          "PCW_TTC0_PERIPHERAL_ENABLE": {
+            "value": "1"
+          },
+          "PCW_TTC0_TTC0_IO": {
+            "value": "EMIO"
+          },
+          "PCW_TTC_PERIPHERAL_FREQMHZ": {
+            "value": "50"
           },
           "PCW_UART0_PERIPHERAL_ENABLE": {
             "value": "0"

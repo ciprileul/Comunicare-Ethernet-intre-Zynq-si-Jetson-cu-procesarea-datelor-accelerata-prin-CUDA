@@ -1,0 +1,15 @@
+{
+  "name": "zynq_app",
+  "type": "HOST",
+  "platform": "C:\\Facultate_an3\\Ssc\\Proiect\\Platform\\export\\Platform\\Platform.xpfm",
+  "domain": "standalone_ps7_cortexa9_0",
+  "cpuInstance": "ps7_cortexa9_0",
+  "cpuType": "cortex-a9",
+  "os": "standalone",
+  "configuration": {
+    "componentType": "HOST",
+    "hostToolchainConfigurations": []
+  },
+  "domainRealName": "standalone_ps7_cortexa9_0",
+  "applicationFlow": "EMBEDDED"
+}
