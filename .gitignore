@@ -1,0 +1,73 @@
+# =====================================================================
+#  .gitignore - P7 Zynq <-> Jetson (SSC)
+#  Regula: in Git pui doar ce ai scris/configurat TU.
+#  Tot ce poate fi regenerat de Vivado / Vitis / compilator ramane local.
+# =====================================================================
+
+# ---------- Generale ----------
+*.log
+*.jou
+*.str
+*.tmp
+*.o
+*.d
+*.a
+*.elf
+*.bin
+*.pdi
+.lock
+.Xil/
+build/
+_ide/
+.clangd
+compile_commands.json
+.vscode/
+Thumbs.db
+desktop.ini
+
+# ---------- Workspace Vitis (fisiere locale ale IDE-ului) ----------
+logs/
+.wsdata/
+.peers.ini
+.repo.yaml
+.vitisWorkspace.json
+
+# ---------- Vivado (PL/) ----------
+# Se pastreaza: PL/PL.xpr, PL/PL.srcs/ (block design, constrangeri),
+#               PL/design_1_wrapper.xsa (hardware-ul exportat)
+PL/PL.cache/
+PL/PL.gen/
+PL/PL.runs/
+PL/PL.sim/
+PL/PL.hw/
+PL/PL.ip_user_files/
+PL/PL.tmp/
+PL/.Xil/
+*.backup.jou
+*.backup.log
+vivado_pid*.zip
+vivado_pid*.str
+
+# ---------- Platforma Vitis (Platform/) ----------
+# Aproape tot e generat din .xsa. Se pastreaza doar:
+#   - Platform/vitis-comp.json  (definitia platformei)
+#   - bsp.yaml                  (setarile tale pentru lwIP, xilffs, UART)
+Platform/*
+!Platform/vitis-comp.json
+!Platform/ps7_cortexa9_0/
+Platform/ps7_cortexa9_0/*
+!Platform/ps7_cortexa9_0/standalone_ps7_cortexa9_0/
+Platform/ps7_cortexa9_0/standalone_ps7_cortexa9_0/*
+!Platform/ps7_cortexa9_0/standalone_ps7_cortexa9_0/bsp/
+Platform/ps7_cortexa9_0/standalone_ps7_cortexa9_0/bsp/*
+!Platform/ps7_cortexa9_0/standalone_ps7_cortexa9_0/bsp/bsp.yaml
+
+# ---------- Jetson ----------
+jetson/bin/
+jetson/obj/
+*.out
+
+# ---------- Date de test ----------
+# Imaginile/textele de intrare se pun in Git (sunt mici).
+# Rezultatele generate la rulare nu.
+test_data/out/
