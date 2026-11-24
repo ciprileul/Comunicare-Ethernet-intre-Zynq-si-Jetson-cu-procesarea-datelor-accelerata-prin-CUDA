@@ -73,6 +73,8 @@ err_t connectionStarted(void *arg, struct tcp_pcb *tpcb, err_t err)
     return ERR_OK;
 }
 
+static uint32_t octetiAsteptati = 0;
+
 err_t receiveMessage(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err)
 {
     if(p == NULL)
@@ -91,20 +93,35 @@ err_t receiveMessage(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, err_t err)
         }          
         aux = aux->next;
     }
+
     tcp_recved(tpcb, p->tot_len);
     pbuf_free(p);
-    if(octetiReceived == lenToSend)
+
+    if(octetiAsteptati == 0 && octetiReceived >= sizeof(antet_t))
+    {
+        antet_t antetPrimit;
+        memcpy(&antetPrimit, ecou, sizeof(antet_t));
+        if(antetPrimit.magic != MAGIC_SSC)
+        {
+            xil_printf("Raspuns invalid\r\n");
+            tcp_close(tpcb);
+            return ERR_OK;            
+        }
+        octetiAsteptati = sizeof(antet_t) + antetPrimit.lenText + antetPrimit.lenImagine;
+        if(octetiAsteptati > sizeof(ecou))
+        {
+            xil_printf("Raspuns invalid\r\n");
+            tcp_close(tpcb);
+            return ERR_OK; 
+        }
+    }   
+    if(octetiAsteptati != 0 && octetiReceived == octetiAsteptati)
     {
         XTime_GetTime(&finishTime);        
-        if(memcmp(ecou, dataToSend, lenToSend) == 0)
-        {
-            uint64_t durataMicrosec = (finishTime - startTime) * 1000000 / COUNTS_PER_SECOND;
-            transferGata = 1;
-            xil_printf("Ecou OK, %d octeti\r\n", lenToSend);
-            xil_printf("Timp dus-intors %d microsecunde\r\n", (uint32_t)durataMicrosec);
-        }
-        else
-            xil_printf("Ecou eroare\r\n");
+        uint64_t durataMicrosec = (finishTime - startTime) * 1000000 / COUNTS_PER_SECOND;
+        xil_printf("Raspuns primit %d octeti\r\n", octetiAsteptati);
+        xil_printf("Timp dus-intors %d microsecunde\r\n", (uint32_t)durataMicrosec);
+        transferGata = 1;
         tcp_close(tpcb);
     }
     return ERR_OK;

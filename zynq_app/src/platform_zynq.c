@@ -170,10 +170,10 @@ timer_callback(XScuTimer * TimerInstance)
 	}
 #endif
 	/* For detecting Ethernet phy link status periodically */
-	if (DetectEthLinkStatus == ETH_LINK_DETECT_INTERVAL) {
-		eth_link_detect(echo_netif);
-		DetectEthLinkStatus = 0;
-	}
+	// if (DetectEthLinkStatus == ETH_LINK_DETECT_INTERVAL) {
+	// 	eth_link_detect(echo_netif);
+	// 	DetectEthLinkStatus = 0;
+	// }
 
 	XScuTimer_ClearInterruptStatus(TimerInstance);
 }

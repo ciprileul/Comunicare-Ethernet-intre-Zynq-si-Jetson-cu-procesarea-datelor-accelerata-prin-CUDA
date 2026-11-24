@@ -140,10 +140,10 @@ timer_callback()
 #endif /*LWIP_DHCP */
 
 	/* For detecting Ethernet phy link status periodically */
-	if (DetectEthLinkStatus == ETH_LINK_DETECT_INTERVAL) {
-		eth_link_detect(echo_netif);
-		DetectEthLinkStatus = 0;
-	}
+	// if (DetectEthLinkStatus == ETH_LINK_DETECT_INTERVAL) {
+	// 	eth_link_detect(echo_netif);
+	// 	DetectEthLinkStatus = 0;
+	// }
 }
 
 #ifndef SDT
