@@ -13,6 +13,22 @@
 
 static int folosesteGPU = 0;
 
+static int salveazaFisier(const char *nume, const void *date, size_t len)
+{
+    FILE *f = fopen(nume, "wb");
+    if (f == NULL)
+        return -1;
+
+    if (fwrite(date, 1, len, f) < len)
+    {
+        fclose(f);
+        return -1;
+    }
+
+    fclose(f);
+    return 0;
+}
+
 static int recvAll(int sock, void *buf, size_t len)
 {
     uint8_t *data = (uint8_t *)buf;
@@ -289,6 +305,24 @@ int main(int argc, char **argv)
         antetRaspuns.magic = MAGIC_SSC;
         antetRaspuns.lenText = antet.lenText;
         antetRaspuns.lenImagine = lenImagineProcesata;
+
+        if(salveazaFisier("rezultat.txt", text, antet.lenText) < 0)
+        {
+            printf("Nu s-a putut salva rezultat.txt\n");
+        }
+        else
+        {
+            printf("S-a salvat rezultat.txt cu succes\n");
+        }
+
+        if(salveazaFisier("rezultat.bmp", imagineProcesata, lenImagineProcesata) < 0)
+        {
+            printf("Nu s-a putut salva rezultat.bmp\n");
+        }
+        else
+        {
+            printf("S-a salvat rezultat.bmp cu succes\n");
+        }
 
         if (sendAll(socketConnection, &antetRaspuns, sizeof(antet_t)) < 0)
         {
